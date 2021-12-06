@@ -1,14 +1,13 @@
+import $ from "jquery";
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import $ from "jquery";
 import "./App.scss";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
 import About from "./components/About";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
 import Home from "./components/Home";
 
 class App extends Component {
-
   constructor(props) {
     super();
     this.state = {
@@ -19,35 +18,17 @@ class App extends Component {
   }
 
   applyPickedLanguage = (pickedLanguage, oppositeLangIconId) => {
-    this.swapCurrentlyActiveLanguage(oppositeLangIconId);
-    document.documentElement.lang = pickedLanguage;
     var resumePath =
       document.documentElement.lang === window.$primaryLanguage
         ? `res_primaryLanguage.json`
         : `res_secondaryLanguage.json`;
     this.loadResumeFromPath(resumePath);
-  }
-
-  swapCurrentlyActiveLanguage = (oppositeLangIconId) => {
-    var pickedLangIconId =
-      oppositeLangIconId === window.$primaryLanguageIconId
-        ? window.$secondaryLanguageIconId
-        : window.$primaryLanguageIconId;
-    document
-      .getElementById(oppositeLangIconId)
-      .removeAttribute("filter", "brightness(40%)");
-    document
-      .getElementById(pickedLangIconId)
-      .setAttribute("filter", "brightness(40%)");
-  }
+  };
 
   componentDidMount = () => {
     this.loadSharedData();
-    this.applyPickedLanguage(
-      window.$primaryLanguage,
-      window.$secondaryLanguageIconId
-    );
-  }
+    this.applyPickedLanguage(window.$primaryLanguage);
+  };
 
   loadResumeFromPath = (path) => {
     $.ajax({
@@ -61,7 +42,7 @@ class App extends Component {
         alert(err);
       },
     });
-  }
+  };
 
   loadSharedData = () => {
     $.ajax({
@@ -76,30 +57,27 @@ class App extends Component {
         alert(err);
       },
     });
-  }
+  };
 
   render() {
     return (
       <Router>
         <Header sharedData={this.state.sharedData.basic_info} />
         <Switch>
-          <Route exact path="/">
+          <Route exact path='/'>
             <Home
               resumeData={this.state.resumeData}
               sharedData={this.state.sharedData}
             />
           </Route>
-          <Route path="/about">
+          <Route path='/about'>
             <About
               resumeBasicInfo={this.state.resumeData.basic_info}
               sharedBasicInfo={this.state.sharedData.basic_info}
             />
           </Route>
         </Switch>
-        <Footer 
-          sharedBasicInfo={this.state.sharedData.basic_info}
-          applyPickedLanguage={this.applyPickedLanguage} 
-        />  
+        <Footer sharedBasicInfo={this.state.sharedData.basic_info} />
       </Router>
     );
   }
